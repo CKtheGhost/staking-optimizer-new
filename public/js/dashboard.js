@@ -160,9 +160,19 @@ function populatePortfolioSummary(portfolio) {
   `;
 }
 
+// Store chart instances globally to manage destruction
+let pieChartInstance = null;
+let lineChartInstance = null;
+
 function renderPortfolioPieChart(portfolio) {
   const ctx = document.getElementById('portfolio-pie-chart')?.getContext('2d');
   if (!ctx) return;
+
+  // Destroy existing pie chart if it exists
+  if (pieChartInstance) {
+    pieChartInstance.destroy();
+    pieChartInstance = null;
+  }
 
   const data = {
     labels: [],
@@ -203,7 +213,7 @@ function renderPortfolioPieChart(portfolio) {
     data.datasets[0].backgroundColor = ['#D1D5DB'];
   }
 
-  new Chart(ctx, {
+  pieChartInstance = new Chart(ctx, {
     type: 'pie',
     data: data,
     options: {
@@ -238,6 +248,12 @@ function renderPnLLineChart(transactions) {
   const ctx = document.getElementById('pnl-line-chart')?.getContext('2d');
   if (!ctx) return;
 
+  // Destroy existing line chart if it exists
+  if (lineChartInstance) {
+    lineChartInstance.destroy();
+    lineChartInstance = null;
+  }
+
   const dates = transactions.length > 0 ? transactions.map(tx => new Date(tx.timestamp)) : [new Date()];
   const minDate = dates.length > 0 ? new Date(Math.min(...dates)) : new Date();
   const maxDate = new Date();
@@ -252,7 +268,7 @@ function renderPnLLineChart(transactions) {
     transactions.map((_, i) => (Math.random() - 0.5) * 100 + (i * 10)) : 
     Array.from({ length: days }, () => (Math.random() - 0.5) * 50);
 
-  new Chart(ctx, {
+  lineChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,

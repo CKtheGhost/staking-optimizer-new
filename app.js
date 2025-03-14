@@ -1,11 +1,10 @@
 // app.js - Main application file
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { Aptos, AptosConfig, Network, Account, Ed25519PrivateKey } = require('@aptos-labs/ts-sdk');
 const axios = require('axios');
 const fs = require('fs');
-require('dotenv').config();
-
 const { AgentRuntime, createAptosTools } = require('move-agent-kit');
 const { ChatAnthropic } = require('@langchain/anthropic');
 const { OpenAI } = require('openai');
@@ -45,6 +44,7 @@ async function initializeAgent() {
   return { account, agent, tools };
 }
 
+// Ensure directories exist
 const viewsDir = path.join(__dirname, 'views');
 if (!fs.existsSync(viewsDir)) fs.mkdirSync(viewsDir, { recursive: true });
 
@@ -80,8 +80,10 @@ app.get('/', async (req, res) => {
   }
 
   try {
+    if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not set in .env');
+    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not set in .env');
+
     const agentData = await initializeAgent();
-    const { ChatAnthropic } = require('@langchain/anthropic');
     const anthropicModel = new ChatAnthropic({
       anthropicApiKey: process.env.ANTHROPIC_API_KEY,
       model: "claude-3-5-sonnet-20241022",
@@ -105,7 +107,7 @@ Provide a JSON response with:
       response = await anthropicModel.invoke(prompt);
       console.log('Generated general strategy with Anthropic');
     } catch (anthropicError) {
-      console.error('Anthropic API failed for general strategy:', anthropicError.message);
+      console.error('Anthropic API failed for general strategy:', anthropicError.response?.data || anthropicError.message);
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const openaiResponse = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -119,6 +121,7 @@ Provide a JSON response with:
     
     const jsonMatch = response.content.match(/```json\n([\s\S]*?)\n```/) || response.content.match(/{[\s\S]*}/);
     if (jsonMatch) generalStrategy = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+    else throw new Error('Could not parse AI response as JSON');
   } catch (strategyError) {
     console.error('General strategy generation error:', strategyError.message);
   }
@@ -178,6 +181,9 @@ app.get('/api/recommendations/ai', async (req, res) => {
       return res.status(400).json({ error: 'Invalid parameters. Required: amount (number) and riskProfile (conservative/balanced/aggressive)' });
     }
     
+    if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not set in .env');
+    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not set in .env');
+
     const agentData = await initializeAgent();
     if (!agentData) throw new Error('Could not initialize AI agent');
 
@@ -202,7 +208,6 @@ Provide a JSON response with:
 
     let response;
     try {
-      const { ChatAnthropic } = require('@langchain/anthropic');
       const anthropicModel = new ChatAnthropic({
         anthropicApiKey: process.env.ANTHROPIC_API_KEY,
         model: "claude-3-5-sonnet-20241022",
@@ -211,7 +216,7 @@ Provide a JSON response with:
       response = await anthropicModel.invoke(prompt);
       console.log('Successfully generated recommendation with Anthropic');
     } catch (anthropicError) {
-      console.error('Anthropic API failed:', anthropicError.message);
+      console.error('Anthropic API failed:', anthropicError.response?.data || anthropicError.message);
       try {
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         const openaiResponse = await openai.chat.completions.create({
@@ -223,7 +228,7 @@ Provide a JSON response with:
         response = { content: openaiResponse.choices[0].message.content };
         console.log('Successfully generated recommendation with OpenAI fallback');
       } catch (openaiError) {
-        console.error('OpenAI fallback failed:', openaiError.message);
+        console.error('OpenAI fallback failed:', openaiError.response?.data || openaiError.message);
         throw new Error('Both Anthropic and OpenAI APIs failed');
       }
     }
