@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staking Rewards Optimizer - Aptos DeFi Dashboard</title>
+  <link rel="stylesheet" href="/css/tailwind.css"> <!-- Replace CDN with local CSS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBtJREFUWEe9V21oW2UUfs5Nm7vdNHGlmyxnS0t/jIG2Wod+TNcWbDtxOhQV/6jgFBE/EJz+UUHRD0QUlYL/VBxYUBwKglXYlDl1bdVVRkXQTepaxrJKbVhI2ybtTd7HnptsSZq+uXdrfeDlvufc9+R5znPe9z7nXYYmR3T3yHaLySQdIAaCY2lQGEBfMDiy2aG9O9fZcXcO5zAQTQMJHxO5PDKn9nScRXS2h8Zr1HtCYN29w/sF4F4AzjKhHJPwsn9g5Nn/FcCmHWN7GdMPArDV8PMYGjyyrfPbuhGINg3cYTKJIwBeqsXkEs8kYnHYWlQU8nn88ctZFAoFROMZBPJuxP0dSYPTIw6H1rPe2/m5DoQmcxuODFuP+Qc+OGk4A9H243czMH+FYZdKAEFQdFFBPpuFJZFGJJqHL2sBmO6n4fFo5qn9ns5fDSEQbT+xQxbYZwRUiwgoFPJYY7UgkZDhy9Tj0wBArBpF2KXELx5tOVaULME4+krdz/0DI7tVAIZHQLR9cpsssMmyDFAJgJVBgCCriEckyLICv1+f8EoQAONZGZSUsyf3tQ9XEYj6hucIWC+qcSAp1A+T6sxIkoLYmgRZVuD3G7FNgSCMJyTKMnMkGQK39IeG7gL4FzYbvpPy+RwcDgfSaRmSVJuSVY7ybwZYTEmkQyHKFMb1U55Hfu8yOkzRXZNDBHhKt4PgBMBKINZa4IsuIh43jjZhJGMxWKz8NEDPVZSgHIA9QnDUFESh4IjDgWw2qzpjvb5L0HQdnNM8cR6/PNzREMDmHePHOUdb3SAKjngkAo/bAwaDXhYQr1IK/Pj5ofYTugBiO8fuEhj7RL2CmkEsgXC73UhlUloZmFESZKh4bkP+0HpvR58uAHXR5uu5gcqm4sMzl2e1TETKM6hcAxAD2PXL1O/+yt+XB6Lbs7Mw27ZWbUhE8KWTSKZSkBsAUFfK1LKx0vPuTw8P91UHMLq71OxLsRKz2RoQoLgUbGwLw9USQrBgx1RWgjpYrfYGBchCDM3M7bxqamaxWjqm5HKwW21wuVyYn5/TlqHatxRdQnRdDGZ7FE6HE3MzM7pmRKzQGF90bcfH81u2/EXA7qJVTGQCH8SiUXg9XpjMZi0LBBCJRJCIxbDWbIbZYtGVge9++PL4o08+1q0C0LXZw9f6/B4QWzEGDGCQT/thaWlRC1p9ZnM5LQPqWm2Gvvzm61++e/f9d6ovpE1DQ+YOd8cYgbZW+TDK5zKIR8JIpVKQJElfpOoVwfNIZxnsMmV8yYUPD4y+OVljNay4LTcHcDrQiF2VSs5ggUAOp5NFvnhqg/P1N1557Ymqs6BWMRrelovGqoN9X7Dxu4BnOj3y7uuTVc80tZ4P9X4vr3dj0uh7wWiDYZs/AeTwGHnB+/vGAAAAAElFTkSuQmCC">
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white shadow-lg">
+      <div class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBtJREFUWEe9V21oW2UUfs5Nm7vdNHGlmyxnS0t/jIG2Wod+TNcWbDtxOhQV/6jgFBE/EJz+UUHRD0QUlYL/VBxYUBwKglXYlDl1bdVVRkXQTepaxrJKbVhI2ybtTd7HnptsSZq+uXdrfeDlvufc9+R5znPe9z7nXYYmR3T3yHaLySQdIAaCY2lQGEBfMDiy2aG9O9fZcXcO5zAQTQMJHxO5PDKn9nScRXS2h8Zr1HtCYN29w/sF4F4AzjKhHJPwsn9g5Nn/FcCmHWN7GdMPArDV8PMYGjyyrfPbuhGINg3cYTKJIwBeqsXkEs8kYnHYWlQU8nn88ctZFAoFROMZBPJuxP0dSYPTIw6H1rPe2/m5DoQmcxuODFuP+Qc+OGk4A9H243czMH+FYZdKAEFQdFFBPpuFJZFGJJqHL2sBmO6n4fFo5qn9ns5fDSEQbT+xQxbYZwRUiwgoFPJYY7UgkZDhy9Tj0wBArBpF2KXELx5tOVaULME4+krdz/0DI7tVAIZHQLR9cpsssMmyDFAJgJVBgCCriEckyLICv1+f8EoQAONZGZSUsyf3tQ9XEYj6hucIWC+qcSAp1A+T6sxIkoLYmgRZVuD3G7FNgSCMJyTKMnMkGQK39IeG7gL4FzYbvpPy+RwcDgfSaRmSVJuSVY7ybwZYTEmkQyHKFMb1U55Hfu8yOkzRXZNDBHhKt4PgBMBKINZa4IsuIh43jjZhJGMxWKz8NEDPVZSgHIA9QnDUFESh4IjDgWw2qzpjvb5L0HQdnNM8cR6/PNzREMDmHePHOUdb3SAKjngkAo/bAwaDXhYQr1IK/Pj5ofYTugBiO8fuEhj7RL2CmkEsgXC73UhlUloZmFESZKh4bkP+0HpvR58uAHXR5uu5gcqm4sMzl2e1TETKM6hcAxAD2PXL1O/+yt+XB6Lbs7Mw27ZWbUhE8KWTSKZSkBsAUFfK1LKx0vPuTw8P91UHMLq71OxLsRKz2RoQoLgUbGwLw9USQrBgx1RWgjpYrfYGBchCDM3M7bxqamaxWjqm5HKwW21wuVyYn5/TlqHatxRdQnRdDGZ7FE6HE3MzM7pmRKzQGF90bcfH81u2/EXA7qJVTGQCH8SiUXg9XpjMZi0LBBCJRJCIxbDWbIbZYtGVge9++PL4o08+1q0C0LXZw9f6/B4QWzEGDGCQT/thaWlRC1p9ZnM5LQPqWm2Gvvzm61++e/f9d6ovpE1DQ+YOd8cYgbZW+TDK5zKIR8JIpVKQJElfpOoVwfNIZxnsMmV8yYUPD4y+OVljNay4LTcHcDrQiF2VSs5ggUAOp5NFvnhqg/P1N1557Ymqs6BWMRrelovGqoN9X7Dxu4BnOj3y7uuTVc80tZ4P9X4vr3dj0uh7wWiDYZs/AeTwGHnB+/vGAAAAAElFTkSuQmCC" alt="Aptos" class="w-8 h-8 mr-3">
+            <h1 class="text-3xl font-bold">Staking Rewards Optimizer</h1>
+          </div>
+          <div class="relative w-96">
+            <input type="text" id="wallet-search" placeholder="Search by wallet address (0x...)" class="w-full p-2 pr-10 rounded text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <button id="search-btn" class="absolute right-2 top-2 text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="mt-4 text-sm">
+          <span class="bg-green-500 text-white px-2 py-1 rounded mr-2">Powered by Move Agent Kit</span>
+          <span>Compare staking rewards across Amnis, Thala, and Echo protocols</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <% if (error) { %>
+        <div class="bg-red-50 p-4 rounded-md mb-8">
+          <div class="flex">
+            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">Error</h3>
+              <p class="mt-2 text-sm text-red-700"><%= error %></p>
+            </div>
+          </div>
+        </div>
+      <% } %>
+
+      <section id="general-strategy" class="mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4">General Market Strategy</h2>
+          <% if (generalStrategy) { %>
+            <div class="mb-6">
+              <p class="text-gray-700 font-semibold"><%= generalStrategy.summary %></p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded mb-6">
+              <div class="flex justify-between items-center">
+                <span class="font-medium">Total Expected APR:</span>
+                <span class="text-blue-700 font-bold text-xl"><%= generalStrategy.totalApr %>%</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto mb-6">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Protocol</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Allocation</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected APR</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% generalStrategy.allocation.forEach(item => { %>
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap font-medium"><%= item.protocol %></td>
+                      <td class="px-6 py-4 whitespace-nowrap"><%= item.product %></td>
+                      <td class="px-6 py-4 whitespace-nowrap"><%= item.percentage %>%</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-blue-600"><%= item.expectedApr %>%</td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-2">Rationale</h3>
+              <p class="text-gray-700"><%= generalStrategy.rationale %></p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-lg font-semibold mb-2">Potential Risks</h3>
+                <ul class="list-disc pl-5 space-y-2">
+                  <% generalStrategy.risks.forEach(risk => { %>
+                    <li class="text-gray-700"><%= risk %></li>
+                  <% }) %>
+                </ul>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="text-center text-red-600">Unable to generate general market strategy at this time.</div>
+          <% } %>
+        </div>
+      </section>
+
+      <section id="wallet-analysis" class="mb-8 hidden">
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-2xl font-bold mb-4">Wallet Analysis</h2>
+    <div id="wallet-loading" class="text-center py-4 hidden">
+      <div class="custom-loader mx-auto mb-2 w-8 h-8"></div>
+      <p class="mt-2 text-sm text-gray-600">Loading wallet data from Aptos blockchain...</p>
+    </div>
+    <div id="wallet-content" class="hidden">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Balance Summary -->
+        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold mb-3 text-gray-800">Portfolio Summary</h3>
+          <div id="portfolio-summary" class="space-y-2 text-sm"></div>
+        </div>
+        <!-- Pie Chart Container -->
+        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold mb-3 text-gray-800">Asset Diversification</h3>
+          <div class="chart-container relative w-full" style="height: 200px;">
+            <canvas id="portfolio-pie-chart"></canvas>
+          </div>
+        </div>
+        <!-- PnL Line Graph Container -->
+        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold mb-3 text-gray-800">PnL Trend</h3>
+          <div class="chart-container relative w-full" style="height: 200px;">
+            <canvas id="pnl-line-chart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-3 text-gray-800">Staking Recommendations</h3>
+        <div id="staking-recommendations" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-3 text-gray-800">Action Items</h3>
+        <div id="action-items" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <section id="ai-recommendation-section" class="mb-8 hidden">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4">AI-Powered Investment Strategy</h2>
+          <div class="mb-6">
+            <p class="text-gray-700">Get personalized investment recommendations powered by Claude 3.5 Sonnet.</p>
+          </div>
+          <form id="ai-recommendation-form" class="bg-gray-50 p-4 rounded mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label for="investment-amount" class="block text-sm font-medium text-gray-700 mb-1">Investment Amount (APT)</label>
+                <input type="number" id="investment-amount" placeholder="Enter APT amount" min="0.1" step="0.1" class="w-full p-2 border border-gray-300 rounded" required>
+              </div>
+              <div>
+                <label for="risk-profile" class="block text-sm font-medium text-gray-700 mb-1">Risk Profile</label>
+                <select id="risk-profile" class="w-full p-2 border border-gray-300 rounded" required>
+                  <option value="conservative">Conservative (Low Risk)</option>
+                  <option value="balanced" selected>Balanced (Medium Risk)</option>
+                  <option value="aggressive">Aggressive (High Risk)</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <input type="hidden" id="wallet-for-ai" value="">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded w-full">Generate AI Recommendation</button>
+              </div>
+            </div>
+          </form>
+          <div id="ai-results" class="hidden"></div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 hover-card">
+          <h2 class="text-2xl font-bold mb-4">Staking Rates</h2>
+          <div class="space-y-4">
+            <div id="protocol-rates" class="space-y-3"></div>
+            <div class="mt-4">
+              <h3 class="text-lg font-semibold mb-2">Recommended Strategies</h3>
+              <div id="staking-strategies" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 hover-card">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Token Overview</h2>
+            <div class="text-xs text-gray-500" id="tokens-last-updated"></div>
+          </div>
+          <div id="meme-coins" class="space-y-2"></div>
+          <div class="mt-4 bg-blue-50 p-3 rounded border border-blue-200">
+            <p class="text-blue-700 text-sm"><span class="font-bold">📊 Market Info:</span> Real-time data showing price movements and market trends for popular tokens on Aptos.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 relative news-container hover-card">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Latest News</h2>
+            <div class="text-xs text-gray-500" id="news-last-updated"></div>
+          </div>
+          <div id="crypto-news" class="space-y-4"></div>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">Key Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="bg-white rounded-lg shadow-md p-5 hover-card">
+            <div class="flex items-center mb-3">
+              <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold">Protocol Analysis</h3>
+            </div>
+            <p class="text-gray-600">Real-time data from Amnis, Thala, and Echo protocols with accurate APR comparisons.</p>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-5 hover-card">
+            <div class="flex items-center mb-3">
+              <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold">Portfolio Tracking</h3>
+            </div>
+            <p class="text-gray-600">Monitor your APT holdings, staked tokens, and liquidity positions in real-time.</p>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-5 hover-card">
+            <div class="flex items-center mb-3">
+              <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold">AI Recommendations</h3>
+            </div>
+            <p class="text-gray-600">Personalized investment strategies powered by Claude 3.5 Sonnet.</p>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-5 hover-card">
+            <div class="flex items-center mb-3">
+              <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold">Market News</h3>
+            </div>
+            <p class="text-gray-600">Stay updated with the latest Aptos ecosystem news and trends.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div>
+            <p class="mb-2">© 2025 Staking Rewards Optimizer</p>
+            <p class="text-sm text-gray-400">Built with Move Agent Kit and Claude 3.5 Sonnet</p>
+          </div>
+          <div class="mt-4 md:mt-0">
+            <a href="https://github.com/your-username/staking-optimizer" target="_blank" class="text-blue-300 hover:text-blue-100 mr-4">GitHub</a>
+            <a href="#" class="text-blue-300 hover:text-blue-100 mr-4">Terms</a>
+            <a href="#" class="text-blue-300 hover:text-blue-100">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    window.stakingData = <%- JSON.stringify(stakingData || {}) %>;
+    window.newsData = <%- JSON.stringify(newsData || {}) %>;
+    window.memeCoinsData = <%- JSON.stringify(memeCoinsData || {}) %>;
+    window.generalStrategy = <%- JSON.stringify(generalStrategy || null) %>;
+  </script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

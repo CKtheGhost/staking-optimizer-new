@@ -1,0 +1,195 @@
+/* Custom styles beyond Tailwind */
+
+/* Custom dashboard colors */
+.bg-aptos-blue { background-color: #0E65F2; }
+.text-aptos-blue { color: #0E65F2; }
+.border-aptos-blue { border-color: #0E65F2; }
+
+/* Animated elements */
+.pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Card hover effects */
+.hover-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+.hover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-card { padding: 0.75rem !important; }
+  .mobile-text-sm { font-size: 0.875rem !important; }
+}
+
+/* Tooltip styles */
+.tooltip { position: relative; display: inline-block; }
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+/* Animation for notifications */
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.notification { animation: slideIn 0.3s ease-out forwards; }
+
+/* Custom loading spinner */
+.custom-loader {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #0E65F2;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Token display styles */
+.token-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+.token-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Modal animation */
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#tokens-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+  animation: modalFadeIn 0.3s ease-out forwards;
+}
+#tokens-modal > div {
+  background-color: white;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Token price movement indicators */
+.price-up::before { content: "▲"; color: #10B981; margin-right: 2px; }
+.price-down::before { content: "▼"; color: #EF4444; margin-right: 2px; }
+
+/* Token category pills */
+.category-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-right: 4px;
+}
+.category-defi { background-color: #E0F2FE; color: #0369A1; }
+.category-meme { background-color: #FEF3C7; color: #92400E; }
+.category-nft { background-color: #F3E8FF; color: #7E22CE; }
+.category-l1 { background-color: #DCFCE7; color: #166534; }
+.category-stablecoin { background-color: #E0E7FF; color: #3730A3; }
+
+/* Token overview card styles */
+.token-overview-card {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.token-overview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.1);
+}
+
+/* Token logo styles */
+.token-logo {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Refresh button */
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+.refresh-btn:hover { background-color: #e5e7eb; color: #1f2937; }
+.refresh-btn svg { width: 0.875rem; height: 0.875rem; margin-right: 0.25rem; }
+
+/* Refresh indicator */
+#news-refresh-indicator, #token-refresh-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Market sentiment indicators */
+.sentiment-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.sentiment-bullish { background-color: #DCFCE7; color: #166534; }
+.sentiment-bearish { background-color: #FEE2E2; color: #B91C1C; }
+.sentiment-neutral { background-color: #F3F4F6; color: #4B5563; }

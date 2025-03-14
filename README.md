@@ -2,6 +2,8 @@
 
 An AI-powered DeFi optimization tool built with Move Agent Kit and Anthropic's Claude 3.5 Sonnet for the **Agentic Infra Track**. It maximizes APT returns across Amnis, Thala, and Echo protocols on the Aptos blockchain by analyzing staking, lending, and AMM opportunities.
 
+![Dashboard Screenshot](https://i.imgur.com/PlLZH9L.png)
+
 ## Features
 
 - **Accurate Contract Integration**: Uses specific contract addresses:
@@ -16,6 +18,11 @@ An AI-powered DeFi optimization tool built with Move Agent Kit and Anthropic's C
   - Aggressive: 8.85% APR (20% Amnis staking, 30% Thala lending, 50% Thala/Amnis AMM)
 - **Risk-Reward Profiles**: Tailored recommendations for conservative, balanced, and aggressive investors.
 - **Real-Time Data**: Fetches blockchain data with fallbacks to documented rates if API calls fail.
+- **Enhanced Dashboard**: Web interface for easy visualization of staking opportunities, portfolio analysis, and market news.
+- **AI Recommendations**: Claude 3.5 Sonnet-powered investment recommendations based on your risk profile and portfolio.
+- **Portfolio Tracking**: Monitor your APT, staked tokens, and liquidity positions across protocols.
+- **Market News**: Stay updated with the latest Aptos ecosystem news and trends.
+- **Meme Coin Tracking**: Monitor performance and risk metrics for popular meme coins on Aptos.
 
 ## Prerequisites
 
@@ -25,65 +32,106 @@ An AI-powered DeFi optimization tool built with Move Agent Kit and Anthropic's C
 
 ## Setup Instructions
 
-1. **Clone Repository** (after creating on GitHub):
+1. **Clone Repository**:
    ```bash
    git clone https://github.com/your-username/staking-optimizer.git
    cd staking-optimizer
+   ```
 
-Install Dependencies:
-bash
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-npm install @aptos-labs/ts-sdk move-agent-kit @langchain/anthropic @langchain/langgraph dotenv
+3. **Configure Environment**:
+   Create `.env` file:
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
 
-Configure Environment:
-Create .env:
-bash
+   Add your keys:
+   ```
+   APTOS_PRIVATE_KEY="0x-your-64-char-hex-key"
+   ANTHROPIC_API_KEY="sk-ant-api03-your-key"
+   ```
 
-nano .env
+   - Source `APTOS_PRIVATE_KEY` from Petra (https://petra.app/)
+   - Source `ANTHROPIC_API_KEY` from Anthropic (https://console.anthropic.com/)
 
-Add:
+4. **Create Directory Structure** (if needed):
+   ```bash
+   mkdir -p public/css public/js views
+   ```
 
-APTOS_PRIVATE_KEY="0x-your-64-char-hex-key"
-ANTHROPIC_API_KEY="sk-ant-api03-your-key"
+5. **Run the Application**:
+   ```bash
+   node staking_optimizer_app.js
+   ```
 
-Source APTOS_PRIVATE_KEY from Petra (https://petra.app/).
+   The dashboard will be available at: http://localhost:3000
 
-Source ANTHROPIC_API_KEY from Anthropic (https://console.anthropic.com/).
+## Usage Guide
 
-How to Run
-bash
+1. **Dashboard Overview**:
+   - View current staking rates, recommended strategies, meme coins, and market news.
+   
+2. **Wallet Analysis**:
+   - Enter any Aptos wallet address to analyze holdings and get personalized recommendations.
+   
+3. **AI Recommendations**:
+   - After wallet analysis, use the AI recommendation form to get personalized investment advice.
+   - Set your investment amount and risk profile to receive a detailed allocation strategy.
 
-node staking_optimizer.js
+4. **Testnet Option**:
+   For low API credits or testing, edit the config in `staking_optimizer_app.js`:
+   ```javascript
+   const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+   const signer = new LocalSigner(account, Network.TESTNET);
+   ```
+   
+   Fund your Testnet address at: https://faucet.testnet.aptoslabs.com/
 
-Output
-The tool fetches real-time data (or uses fallbacks) and provides:
-Detailed APRs for staking, lending, and AMM per protocol.
+## Project Structure
 
-Blended APR strategies (e.g., Thala: 8.3%).
+```
+staking-optimizer/
+├── staking_optimizer_app.js    # Main application entry point
+├── app.js                      # Express app configuration
+├── modules/                    # Data processing modules
+│   ├── staking_optimizer.js    # Staking protocol analysis
+│   ├── portfolio_tracker.js    # Wallet portfolio tracking
+│   ├── meme_coins_tracker.js   # Meme coin analysis
+│   └── news_tracker.js         # Crypto news fetching
+├── public/                     # Static assets
+│   ├── css/                    # CSS stylesheets
+│   └── js/                     # Client-side JavaScript
+├── views/                      # EJS templates
+│   └── dashboard.ejs           # Main dashboard template
+├── .env                        # Environment variables
+└── package.json                # Dependencies and scripts
+```
 
-Risk-based recommendations (conservative, balanced, aggressive).
+## API Endpoints
 
-Known Issues
-Amnis Parsing: May fallback to 21,703,047 APT if supply structure changes.
+- **`/`**: Main dashboard
+- **`/api/wallet/:address`**: Get wallet analytics for specific address
+- **`/api/news/latest`**: Get latest crypto news
+- **`/api/recommendations/ai`**: Generate AI investment recommendations
 
-Thala Staking: Blockchain fetch may fail ("Resource not found"); uses 7.5% APR estimate.
+## Known Issues
 
-NPM Vulnerabilities: 12 high-severity issues (e.g., axios <1.8.2). See npm audit. Mitigation planned post-competition.
+- **Amnis Parsing**: May fallback to 21,703,047 APT if supply structure changes.
+- **Thala Staking**: Blockchain fetch may fail with "Resource not found"; uses 7.5% APR estimate.
+- **NPM Vulnerabilities**: High-severity issues (e.g., axios <1.8.2). See `npm audit`. Mitigation planned post-competition.
 
-Testnet Option
-For low API credits:
-Edit staking_optimizer.js:
-javascript
+## Competition Details
 
-const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-const signer = new LocalSigner(account, Network.TESTNET);
+- **Track**: Agentic Infra Track
+- **Date**: March 13, 2025
+- **Author**: Connor Kemet, Prospera
+- **Built With**: Move Agent Kit, Anthropic Claude 3.5 Sonnet
 
-Fund Testnet address (0x213b...dce5) at https://faucet.testnet.aptoslabs.com/.
+## License
 
-Submission Details
-Files: staking_optimizer.js, README.md, .env (template)
-
-Competition: Agentic Infra Track, March 13, 2025
-
-Author: Connor Kemet, Prospera
-
+MIT License - See [LICENSE.txt](LICENSE.txt) for details.
