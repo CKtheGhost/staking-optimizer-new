@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staking Rewards Optimizer - Aptos DeFi Dashboard</title>
-  <link rel="stylesheet" href="/css/tailwind.css"> <!-- Replace CDN with local CSS -->
+  <link rel="stylesheet" href="/css/tailwind.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
@@ -12,28 +12,106 @@
 </head>
 <body class="bg-gray-100 text-gray-900">
   <div class="min-h-screen flex flex-col">
-    <header class="bg-blue-600 text-white shadow-lg">
-      <div class="container mx-auto px-4 py-6">
+    <header class="bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg sticky top-0 z-50">
+      <!-- Top Header with Logo and Search -->
+      <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
           <div class="flex items-center">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBtJREFUWEe9V21oW2UUfs5Nm7vdNHGlmyxnS0t/jIG2Wod+TNcWbDtxOhQV/6jgFBE/EJz+UUHRD0QUlYL/VBxYUBwKglXYlDl1bdVVRkXQTepaxrJKbVhI2ybtTd7HnptsSZq+uXdrfeDlvufc9+R5znPe9z7nXYYmR3T3yHaLySQdIAaCY2lQGEBfMDiy2aG9O9fZcXcO5zAQTQMJHxO5PDKn9nScRXS2h8Zr1HtCYN29w/sF4F4AzjKhHJPwsn9g5Nn/FcCmHWN7GdMPArDV8PMYGjyyrfPbuhGINg3cYTKJIwBeqsXkEs8kYnHYWlQU8nn88ctZFAoFROMZBPJuxP0dSYPTIw6H1rPe2/m5DoQmcxuODFuP+Qc+OGk4A9H243czMH+FYZdKAEFQdFFBPpuFJZFGJJqHL2sBmO6n4fFo5qn9ns5fDSEQbT+xQxbYZwRUiwgoFPJYY7UgkZDhy9Tj0wBArBpF2KXELx5tOVaULME4+krdz/0DI7tVAIZHQLR9cpsssMmyDFAJgJVBgCCriEckyLICv1+f8EoQAONZGZSUsyf3tQ9XEYj6hucIWC+qcSAp1A+T6sxIkoLYmgRZVuD3G7FNgSCMJyTKMnMkGQK39IeG7gL4FzYbvpPy+RwcDgfSaRmSVJuSVY7ybwZYTEmkQyHKFMb1U55Hfu8yOkzRXZNDBHhKt4PgBMBKINZa4IsuIh43jjZhJGMxWKz8NEDPVZSgHIA9QnDUFESh4IjDgWw2qzpjvb5L0HQdnNM8cR6/PNzREMDmHePHOUdb3SAKjngkAo/bAwaDXhYQr1IK/Pj5ofYTugBiO8fuEhj7RL2CmkEsgXC73UhlUloZmFESZKh4bkP+0HpvR58uAHXR5uu5gcqm4sMzl2e1TETKM6hcAxAD2PXL1O/+yt+XB6Lbs7Mw27ZWbUhE8KWTSKZSkBsAUFfK1LKx0vPuTw8P91UHMLq71OxLsRKz2RoQoLgUbGwLw9USQrBgx1RWgjpYrfYGBchCDM3M7bxqamaxWjqm5HKwW21wuVyYn5/TlqHatxRdQnRdDGZ7FE6HE3MzM7pmRKzQGF90bcfH81u2/EXA7qJVTGQCH8SiUXg9XpjMZi0LBBCJRJCIxbDWbIbZYtGVge9++PL4o08+1q0C0LXZw9f6/B4QWzEGDGCQT/thaWlRC1p9ZnM5LQPqWm2Gvvzm61++e/f9d6ovpE1DQ+YOd8cYgbZW+TDK5zKIR8JIpVKQJElfpOoVwfNIZxnsMmV8yYUPD4y+OVljNay4LTcHcDrQiF2VSs5ggUAOp5NFvnhqg/P1N1557Ymqs6BWMRrelovGqoN9X7Dxu4BnOj3y7uuTVc80tZ4P9X4vr3dj0uh7wWiDYZs/AeTwGHnB+/vGAAAAAElFTkSuQmCC" alt="Aptos" class="w-8 h-8 mr-3">
-            <h1 class="text-3xl font-bold">Staking Rewards Optimizer</h1>
+            <div class="flex items-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBtJREFUWEe9V21oW2UUfs5Nm7vdNHGlmyxnS0t/jIG2Wod+TNcWbDtxOhQV/6jgFBE/EJz+UUHRD0QUlYL/VBxYUBwKglXYlDl1bdVVRkXQTepaxrJKbVhI2ybtTd7HnptsSZq+uXdrfeDlvufc9+R5znPe9z7nXYYmR3T3yHaLySQdIAaCY2lQGEBfMDiy2aG9O9fZcXcO5zAQTQMJHxO5PDKn9nScRXS2h8Zr1HtCYN29w/sF4F4AzjKhHJPwsn9g5Nn/FcCmHWN7GdMPArDV8PMYGjyyrfPbuhGINg3cYTKJIwBeqsXkEs8kYnHYWlQU8nn88ctZFAoFROMZBPJuxP0dSYPTIw6H1rPe2/m5DoQmcxuODFuP+Qc+OGk4A9H243czMH+FYZdKAEFQdFFBPpuFJZFGJJqHL2sBmO6n4fFo5qn9ns5fDSEQbT+xQxbYZwRUiwgoFPJYY7UgkZDhy9Tj0wBArBpF2KXELx5tOVaULME4+krdz/0DI7tVAIZHQLR9cpsssMmyDFAJgJVBgCCriEckyLICv1+f8EoQAONZGZSUsyf3tQ9XEYj6hucIWC+qcSAp1A+T6sxIkoLYmgRZVuD3G7FNgSCMJyTKMnMkGQK39IeG7gL4FzYbvpPy+RwcDgfSaRmSVJuSVY7ybwZYTEmkQyHKFMb1U55Hfu8yOkzRXZNDBHhKt4PgBMBKINZa4IsuIh43jjZhJGMxWKz8NEDPVZSgHIA9QnDUFESh4IjDgWw2qzpjvb5L0HQdnNM8cR6/PNzREMDmHePHOUdb3SAKjngkAo/bAwaDXhYQr1IK/Pj5ofYTugBiO8fuEhj7RL2CmkEsgXC73UhlUloZmFESZKh4bkP+0HpvR58uAHXR5uu5gcqm4sMzl2e1TETKM6hcAxAD2PXL1O/+yt+XB6Lbs7Mw27ZWbUhE8KWTSKZSkBsAUFfK1LKx0vPuTw8P91UHMLq71OxLsRKz2RoQoLgUbGwLw9USQrBgx1RWgjpYrfYGBchCDM3M7bxqamaxWjqm5HKwW21wuVyYn5/TlqHatxRdQnRdDGZ7FE6HE3MzM7pmRKzQGF90bcfH81u2/EXA7qJVTGQCH8SiUXg9XpjMZi0LBBCJRJCIxbDWbIbZYtGVge9++PL4o08+1q0C0LXZw9f6/B4QWzEGDGCQT/thaWlRC1p9ZnM5LQPqWm2Gvvzm61++e/f9d6ovpE1DQ+YOd8cYgbZW+TDK5zKIR8JIpVKQJElfpOoVwfNIZxnsMmV8yYUPD4y+OVljNay4LTcHcDrQiF2VSs5ggUAOp5NFvnhqg/P1N1557Ymqs6BWMRrelovGqoN9X7Dxu4BnOj3y7uuTVc80tZ4P9X4vr3dj0uh7wWiDYZs/AeTwGHnB+/vGAAAAAElFTkSuQmCC" alt="Aptos" class="w-8 h-8 mr-3">
+              <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">DeFi Headquarters</h1>
+            </div>
+            <div class="hidden md:flex ml-8 space-x-2">
+              <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-inner shadow-green-500/30 border border-green-500/50">Powered by Move Agent Kit</span>
+              <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-inner shadow-purple-500/30 border border-purple-500/50">Built with Claude 3.5 Sonnet</span>
+            </div>
           </div>
-          <div class="relative w-96">
-            <input type="text" id="wallet-search" placeholder="Search by wallet address (0x...)" class="w-full p-2 pr-10 rounded text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300">
-            <button id="search-btn" class="absolute right-2 top-2 text-gray-600">
+          <div class="relative w-64 md:w-96">
+            <input type="text" id="wallet-search" placeholder="Search by wallet address (0x...)" class="w-full p-2 pr-10 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner bg-white/90">
+            <button id="search-btn" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
           </div>
         </div>
-        <div class="mt-4 text-sm">
-          <span class="bg-green-500 text-white px-2 py-1 rounded mr-2">Powered by Move Agent Kit</span>
-          <span>Compare staking rewards across Amnis, Thala, and Echo protocols</span>
+      </div>
+      
+      <!-- Navigation Tabs -->
+      <div class="container mx-auto px-4 pt-2">
+        <div class="flex justify-between items-center">
+          <nav class="flex space-x-1 overflow-x-auto pb-2 scrollbar-hide">
+            <a href="#news-feed" class="nav-tab" data-section="news-feed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              News & Updates
+            </a>
+            <a href="#market-overview" class="nav-tab active" data-section="market-overview">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+              </svg>
+              Market Overview
+            </a>
+            <a href="#protocol-comparison" class="nav-tab" data-section="protocol-comparison">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Protocol Comparison
+            </a>
+            <a href="#wallet-analysis" class="nav-tab" data-section="wallet-analysis">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              Portfolio Analysis
+            </a>
+            <a href="#ai-recommendation" class="nav-tab" data-section="ai-recommendation">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AI Recommendations
+            </a>
+          </nav>
+          <div class="flex space-x-2">
+            <button id="connect-wallet-btn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-all duration-300 border border-white/30 backdrop-blur-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Connect Wallet
+            </button>
+            <div class="relative group">
+              <button id="settings-btn" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg flex items-center transition-all duration-300 border border-white/30 backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+              <div class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dark Mode</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Network</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Documentation</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>
+
+    <!-- NYSE-Style Ticker Banner -->
+    <div class="bg-gray-900 text-white py-2 shadow-md overflow-hidden">
+      <div class="container mx-auto">
+        <div class="ticker-wrapper">
+          <div class="ticker-title bg-blue-600 text-white px-3 py-1 rounded-sm mr-3 inline-block font-bold">
+            APTOS LIVE
+          </div>
+          <div class="ticker-container relative inline-flex items-center">
+            <div id="crypto-ticker" class="flex ticker-animation">
+              <!-- Token items will be added here by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <main class="flex-grow container mx-auto px-4 py-8">
       <% if (error) { %>
@@ -50,6 +128,18 @@
         </div>
       <% } %>
 
+      <!-- News Feed Section -->
+      <section id="news-feed" class="mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4">Latest News</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="crypto-news">
+            <!-- News items will be inserted here by JavaScript -->
+          </div>
+          <div class="text-xs text-gray-500 mt-4" id="news-last-updated"></div>
+        </div>
+      </section>
+
+      <!-- General Strategy Section -->
       <section id="general-strategy" class="mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-2xl font-bold mb-4">General Market Strategy</h2>
@@ -105,47 +195,49 @@
         </div>
       </section>
 
+      <!-- Wallet Analysis Section -->
       <section id="wallet-analysis" class="mb-8 hidden">
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-bold mb-4">Wallet Analysis</h2>
-    <div id="wallet-loading" class="text-center py-4 hidden">
-      <div class="custom-loader mx-auto mb-2 w-8 h-8"></div>
-      <p class="mt-2 text-sm text-gray-600">Loading wallet data from Aptos blockchain...</p>
-    </div>
-    <div id="wallet-content" class="hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Balance Summary -->
-        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-          <h3 class="text-lg font-semibold mb-3 text-gray-800">Portfolio Summary</h3>
-          <div id="portfolio-summary" class="space-y-2 text-sm"></div>
-        </div>
-        <!-- Pie Chart Container -->
-        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-          <h3 class="text-lg font-semibold mb-3 text-gray-800">Asset Diversification</h3>
-          <div class="chart-container relative w-full" style="height: 200px;">
-            <canvas id="portfolio-pie-chart"></canvas>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4">Wallet Analysis</h2>
+          <div id="wallet-loading" class="text-center py-4 hidden">
+            <div class="custom-loader mx-auto mb-2 w-8 h-8"></div>
+            <p class="mt-2 text-sm text-gray-600">Loading wallet data from Aptos blockchain...</p>
+          </div>
+          <div id="wallet-content" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Balance Summary -->
+              <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Portfolio Summary</h3>
+                <div id="portfolio-summary" class="space-y-2 text-sm"></div>
+              </div>
+              <!-- Pie Chart Container -->
+              <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Asset Diversification</h3>
+                <div class="chart-container relative w-full" style="height: 200px;">
+                  <canvas id="portfolio-pie-chart"></canvas>
+                </div>
+              </div>
+              <!-- PnL Line Graph Container -->
+              <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">PnL Trend</h3>
+                <div class="chart-container relative w-full" style="height: 200px;">
+                  <canvas id="pnl-line-chart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6">
+              <h3 class="text-lg font-semibold mb-3 text-gray-800">Staking Recommendations</h3>
+              <div id="staking-recommendations" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+            <div class="mt-6">
+              <h3 class="text-lg font-semibold mb-3 text-gray-800">Action Items</h3>
+              <div id="action-items" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
           </div>
         </div>
-        <!-- PnL Line Graph Container -->
-        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-          <h3 class="text-lg font-semibold mb-3 text-gray-800">PnL Trend</h3>
-          <div class="chart-container relative w-full" style="height: 200px;">
-            <canvas id="pnl-line-chart"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6">
-        <h3 class="text-lg font-semibold mb-3 text-gray-800">Staking Recommendations</h3>
-        <div id="staking-recommendations" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-      </div>
-      <div class="mt-6">
-        <h3 class="text-lg font-semibold mb-3 text-gray-800">Action Items</h3>
-        <div id="action-items" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
+      <!-- AI Recommendation Section -->
       <section id="ai-recommendation-section" class="mb-8 hidden">
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-2xl font-bold mb-4">AI-Powered Investment Strategy</h2>
@@ -176,36 +268,38 @@
         </div>
       </section>
 
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Protocol Comparison Section -->
+      <section id="protocol-comparison" class="mb-8">
         <div class="bg-white rounded-lg shadow-md p-6 hover-card">
-          <h2 class="text-2xl font-bold mb-4">Staking Rates</h2>
-          <div class="space-y-4">
-            <div id="protocol-rates" class="space-y-3"></div>
-            <div class="mt-4">
-              <h3 class="text-lg font-semibold mb-2">Recommended Strategies</h3>
-              <div id="staking-strategies" class="space-y-3"></div>
+          <h2 class="text-2xl font-bold mb-4">Protocol Comparison</h2>
+          <!-- Protocol Comparison Table -->
+          <div class="overflow-x-auto mb-6">
+            <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Protocol</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Staking APR</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Lending APR</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">AMM APR</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Blended Strategy</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200" id="protocol-rates-table">
+                <!-- Protocol data will be inserted here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Recommended Strategies Section -->
+          <div class="mt-8">
+            <h3 class="text-xl font-bold mb-4">Recommended Strategies</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="staking-strategies">
+              <!-- Strategies will be inserted here by JavaScript -->
             </div>
           </div>
         </div>
-        <div class="bg-white rounded-lg shadow-md p-6 hover-card">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Token Overview</h2>
-            <div class="text-xs text-gray-500" id="tokens-last-updated"></div>
-          </div>
-          <div id="meme-coins" class="space-y-2"></div>
-          <div class="mt-4 bg-blue-50 p-3 rounded border border-blue-200">
-            <p class="text-blue-700 text-sm"><span class="font-bold">📊 Market Info:</span> Real-time data showing price movements and market trends for popular tokens on Aptos.</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 relative news-container hover-card">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Latest News</h2>
-            <div class="text-xs text-gray-500" id="news-last-updated"></div>
-          </div>
-          <div id="crypto-news" class="space-y-4"></div>
-        </div>
       </section>
 
+      <!-- Key Features Section -->
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-6">Key Features</h2>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
